@@ -1,6 +1,9 @@
 package entities;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -85,6 +88,16 @@ public class Programa {
             System.out.println("Erro: " + e.getMessage());
         }
     }
+    
+    public static boolean dataValida(String data) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate.parse(data, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
 
     public static Evento cadastrarEvento(Scanner scanner, SimpleDateFormat df, int numeroEvento) throws Exception {
         System.out.print("Título: ");
@@ -97,26 +110,46 @@ public class Programa {
         String tipoEvento = scanner.nextLine();
         switch (tipoEvento.toLowerCase()) {
             case "único":
-                System.out.print("Data de Realização (dd/MM/yyyy): ");
-                Date dataRealizacao = df.parse(scanner.nextLine());
+            	System.out.print("Data de Realização (dd/MM/yyyy): ");
+                String dataRealizacaoStr = scanner.nextLine();
+                if (!dataValida(dataRealizacaoStr)) {
+                    throw new DataInvalidaException("Data de realização inválida. Formato esperado: dd/MM/yyyy");
+                }
+                Date dataRealizacao = df.parse(dataRealizacaoStr);
                 System.out.print("Localização: ");
                 String localizacaoUnico = scanner.nextLine();
                 evento = new EventoUnico(titulo, descricao, dataRealizacao, dataRealizacao, localizacaoUnico);
                 break;
             case "recorrente":
-                System.out.print("Data de Início (dd/MM/yyyy): ");
-                Date dataInicio = df.parse(scanner.nextLine());
+            	System.out.print("Data de Início (dd/MM/yyyy): ");
+                String dataInicioStr = scanner.nextLine();
+                if (!dataValida(dataInicioStr)) {
+                    throw new DataInvalidaException("Data de início inválida. Formato esperado: dd/MM/yyyy");
+                }
+                Date dataInicio = df.parse(dataInicioStr);
                 System.out.print("Data de Fim (dd/MM/yyyy): ");
-                Date dataFim = df.parse(scanner.nextLine());
+                String dataFimStr = scanner.nextLine();
+                if (!dataValida(dataFimStr)) {
+                    throw new DataInvalidaException("Data de fim inválida. Formato esperado: dd/MM/yyyy");
+                }
+                Date dataFim = df.parse(dataFimStr);
                 System.out.print("Localização: ");
                 String localizacaoRecorrente = scanner.nextLine();
                 evento = new EventoRecorrente(titulo, descricao, dataInicio, dataFim, localizacaoRecorrente);
                 break;
             case "periódico":
-                System.out.print("Data de Início (dd/MM/yyyy): ");
-                Date dataInicioPeriodico = df.parse(scanner.nextLine());
+            	System.out.print("Data de Início (dd/MM/yyyy): ");
+                String dataInicioPeriodicoStr = scanner.nextLine();
+                if (!dataValida(dataInicioPeriodicoStr)) {
+                    throw new DataInvalidaException("Data de início do evento periódico inválida. Formato esperado: dd/MM/yyyy");
+                }
+                Date dataInicioPeriodico = df.parse(dataInicioPeriodicoStr);
                 System.out.print("Data de Fim (dd/MM/yyyy): ");
-                Date dataFimPeriodico = df.parse(scanner.nextLine());
+                String dataFimPeriodicoStr = scanner.nextLine();
+                if (!dataValida(dataFimPeriodicoStr)) {
+                    throw new DataInvalidaException("Data de fim do evento periódico inválida. Formato esperado: dd/MM/yyyy");
+                }
+                Date dataFimPeriodico = df.parse(dataFimPeriodicoStr);
                 System.out.print("Localização: ");
                 String localizacaoPeriodico = scanner.nextLine();
                 System.out.print("Dia da semana (DOMINGO, SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO): ");
